@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@splinetool/loader": "^0.9.517",
+    "gsap": "^3.12.2"
+  }
+}

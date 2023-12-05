@@ -1,0 +1,324 @@
+
+<html>
+
+<head>
+    <link rel="stylesheet" href="/style.css" />
+    <script type="text/javascript" src=
+            "https://code.jquery.com/jquery-1.12.0.min.js">
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <title>2023 Spending</title>
+    <nav style="background-color: #D1F2F4">
+        <div class="logo">
+            <img src="./Logo.svg"> 
+        </div>
+        
+        <ul class="nav-links">
+          <li><a href="./index.html">Home</a></li>
+          <li><a href="./chart.html">Work</a></li>
+          <li><a href="#">About Me</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+    
+        <div class="burger">
+          <div class="line1"></div>
+          <div class="line2"></div>  
+          <div class="line3"></div>
+        </div>
+      </nav>
+  
+  <div class="hero">
+        <div class="hero-content">
+            <h1>My asynchronous request</h1>
+
+            
+        </div>
+        <iframe src="https://giphy.com/embed/xTiTnqUxyWbsAXq7Ju" width="300" height="480" frameborder="0" class="giphy-embed" allowfullscreen></iframe>
+    </div>
+
+<style>
+    /* font */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Work+Sans&display=swap');
+
+/* general styles/////////////////////////////////////////////////////////// */
+body{
+  background: #D1F2F4; 
+  color:#424242;
+  font-family: 'Work Sans',sans-serif; 
+}
+h1{
+  font-size:40px;
+}
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    padding:70px;
+    margin-top:40px;
+    margin-left:90px;
+    margin-right:90px;
+    background-color:#fafafa;
+    border: 1px solid #f5f5f5;
+}
+
+.flex-item-left{
+  flex:20%
+}
+.flex-item-right {
+    flex: 80%; /* Adjust as needed for the desired width */
+}
+
+.flex-item {
+    flex: 50%;
+   
+}
+
+/* Reset some default styles for the example */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Apply styles to the hero section */
+.hero {
+    display: flex;
+    flex-direction: column; /* Stack items vertically on small screens */
+    align-items: center;
+    text-align: left;
+    padding: 40px;
+    justify-content:center;
+}
+
+.hero-content {
+    max-width: 600px;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+
+.hero-image {
+    max-width: 100%;
+    height: auto;
+}
+
+
+
+#doughnut-chart{
+  width: 800px;
+  
+} 
+/* media queries ////////////////////////////////////////////////////*/
+
+
+
+@media only screen and (max-width: 600px) {
+
+
+#doughnut-chart{
+  width: 340px;
+  
+} 
+#agency-chart{
+   width: 340px;
+}
+
+#zip-code-chart{
+   width: 340px;
+}
+
+#payment-description-chart{
+   width: 340px;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    border-style: solid;
+    border-radius: 10px;
+    padding:10px;
+    margin-top:10px;
+    margin-left:10px;
+    margin-right:10px;
+}
+ 
+    }
+  
+@media (min-width: 768px) {
+    .hero {
+        flex-direction: row; /* Align items side by side on larger screens */
+        align-items: center;
+    }
+
+    .hero-content {
+        margin-right: 20px;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+<!-- Navigation bar -->
+
+
+<!-- chart canvas -->
+<div class="flex-container">
+    <div class="flex-item-left">
+      <h3>Which Agencies Spent the Most in FY 2023?</h3>
+    </div>
+  <div class="flex-item-right">
+    <canvas id="agency-chart" ></canvas>
+  </div>
+</div>
+  
+  
+
+
+     
+<!-- javascript, it was easier for me on the same file -->
+<script>
+
+        // getting the data
+        async function getData() {
+
+        var data={};
+       await $.ajax({
+            url: "https://data.princegeorgescountymd.gov/resource/sk5x-gxv7.json",
+            type: "GET",
+            data: {
+            "$limit" : 50000,
+            "$$app_token" : "cy4v4QS0FFYbIygQkzM6l7FYJ"
+            }
+            }).done(function(data1) {
+            console.log(data1.length)
+            data = data1
+            console.log(data)
+        });
+       //processing for chart 1
+            console.log(data);
+            length = data.length;
+            console.log(length);
+
+            labels = [];
+            values = [];
+
+            let summary = {}
+
+            for (i = 0; i < length; i++) {
+                if(Object.keys(summary).find((element) => element === data[i].payee_name)){
+                    summary[data[i].payee_name] += Number(data[i].amount)/1000000
+                }
+                else{
+                    summary[data[i].payee_name]=  Number(data[i].amount)/1000000
+                }
+
+
+            }
+            console.log(summary)
+
+            function sortObjectbyValue(obj={},asc=true){
+                const ret = {};
+                Object.keys(obj).sort((a,b) => obj[asc?a:b]-obj[asc?b:a]).forEach(s => ret[s] = obj[s]);
+                return ret
+            }
+
+            sortedSummary = sortObjectbyValue(summary)
+            labels = Object.keys(sortedSummary).slice(-5);
+            values = Object.values(sortedSummary).slice(-5);
+          
+           //processing for chart 2
+           const agencySummary = {};
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+
+        if (!agencySummary[row.agency]) {
+            agencySummary[row.agency] = 0;
+        }
+        agencySummary[row.agency] += Number(row.amount) / 1000000;
+        
+    }
+          const sortedAgencyData = Object.keys(agencySummary)
+    .map(agency => ({
+        agency,
+        amount: agencySummary[agency]
+    }))
+    .sort((a, b) => b.amount - a.amount);
+
+// Extract the sorted data and labels
+          
+const topFiveAgencies = sortedAgencyData.slice(0, 5);
+const agencyLabels = topFiveAgencies.map(item => item.agency);
+const agencyData = topFiveAgencies.map(item => item.amount);
+
+// const agencyLabels = sortedAgencyData.map(item => item.agency);
+// const agencyData = sortedAgencyData.map(item => item.amount);
+
+console.log("agencyData (in millions)");
+console.log(agencyData);
+          //CHARTS______________________________________________________________________________________________________________
+          
+                    //CHART 1 BAR
+new Chart(document.getElementById("agency-chart"), {
+        type: 'bar',
+        data: {
+            labels: agencyLabels,
+            datasets: [{
+                label: "Amount spent (in mn$)",
+                data: agencyData,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgb(54, 162, 235)',
+            }]
+        },
+        options: {
+            responsive: true,
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Amount Spent by Agency'
+            },
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true,
+                        steps: 20,
+                        stepValue: 1000,
+                    }
+                }]
+            }
+        }
+    });
+
+        }
+
+   
+        getData();
+    </script>
+</body>
+
+</html>
